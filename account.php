@@ -1,29 +1,34 @@
 <?php
 require_once "core.php";
-$Database = new Database();
-$days = array( 1 => "Понедельник" , "Вторник" , "Среда" , "Четверг" , "Пятница" , "Суббота" , "Воскресенье" );
-$months = array(1 => "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря");
-$hours = array (1 => "Час", "Часа", "Часа", "Часа", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов",);
 
-$qry = 'SELECT user_name, user_surname, user_middle_name, section_name, sport_name, coach_name, coach_surname, u.id_coach, u.id_section, u.id_sport, schedule_date, schedule_duration, id_schedule FROM user_yamas u INNER JOIN section s ON u.id_section = s.id_section INNER JOIN coach c on u.id_coach = c.id_coach INNER JOIN sport s2 on u.id_sport = s2.id_sport INNER JOIN schedule s3 ON u.id_sport = s3.id_sport WHERE u.id_user = :id';
-$parm = ['id' => $_SESSION['id_user']];
-$user = $Database->getRow($qry, $parm);
+if (!$_SESSION['id_yamas_user']) {
+    header('Location: registration.php');
+}
+
+// $Database = new Database();
+// $days = array( 1 => "Понедельник" , "Вторник" , "Среда" , "Четверг" , "Пятница" , "Суббота" , "Воскресенье" );
+// $months = array(1 => "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря");
+// $hours = array (1 => "Час", "Часа", "Часа", "Часа", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов",);
+
+// $qry = 'SELECT name_yamas_user, surname_yamas_user, patronymic_yamas_user, section_name, sport_name, coach_name, coach_surname, u.id_coach, u.id_section, u.id_sport, schedule_date, schedule_duration, id_schedule FROM yamas_user u INNER JOIN section s ON u.id_section = s.id_section INNER JOIN coach c on u.id_coach = c.id_coach INNER JOIN sport s2 on u.id_sport = s2.id_sport INNER JOIN schedule s3 ON u.id_sport = s3.id_sport WHERE u.id_yamas_user = :id';
+// $parm = ['id' => $_SESSION['id_yamas_user']];
+// $user = $Database->getRow($qry, $parm);
 
 
-$parm = ['id_section' => $user['id_section']];
-$qry = 'SELECT * FROM sport WHERE id_section = :id_section';
-$sports = $Database->getAll($qry, $parm);
+// $parm = ['id_section' => $user['id_section']];
+// $qry = 'SELECT * FROM sport WHERE id_section = :id_section';
+// $sports = $Database->getAll($qry, $parm);
 
-$qry = 'SELECT * FROM coach';
-$coaches = $Database->getAll($qry);
+// $qry = 'SELECT * FROM coach';
+// $coaches = $Database->getAll($qry);
 
-$qry = 'SELECT * FROM section';
-$sections = $Database->getAll($qry);
+// $qry = 'SELECT * FROM section';
+// $sections = $Database->getAll($qry);
 
-$date = $days[date('N', strtotime($user['schedule_date']))] . date(', j ', strtotime($user['schedule_date'])) . $months[date('N', strtotime($user['schedule_date']))];
-$duration = date('G', strtotime($user['schedule_duration']));
-$time = date("H:i", strtotime($user['schedule_date']));
-?>
+// $date = $days[date('N', strtotime($user['schedule_date']))] . date(', j ', strtotime($user['schedule_date'])) . $months[date('N', strtotime($user['schedule_date']))];
+// $duration = date('G', strtotime($user['schedule_duration']));
+// $time = date("H:i", strtotime($user['schedule_date']));
+// ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -63,9 +68,9 @@ $time = date("H:i", strtotime($user['schedule_date']));
                                 <li><p>Отчество:</p></li>
                             </ul>
                             <ul class="ci">
-                                <li><p><?php echo $_SESSION['user_surname'] ?></p></li>
-                                <li><p><?php echo $_SESSION['user_name'] ?></p></li>
-                                <li><p><?php echo $_SESSION['user_middle_name'] ?></p></li>
+                                <li><p><?php echo $_SESSION['surname_yamas_user'] ?></p></li>
+                                <li><p><?php echo $_SESSION['name_yamas_user'] ?></p></li>
+                                <li><p><?php echo $_SESSION['patronymic_yamas_user'] ?></p></li>
                             </ul>
                         </div>
                         <div class="one">

@@ -2,6 +2,10 @@
 // Подключение БД
 require "core.php";
 
+if ($_SESSION['id_yamas_user']) {
+    header('Location: account.php');
+}
+
 // Проверка на наличие объекта
 if(!isset($Database)){
     $Database = new Database();
@@ -13,40 +17,37 @@ if (isset($_POST['reg_submit'])) {
         'surname' => trim($_POST['surname']),
         'name' => trim($_POST['name']),
         'middle_name' => trim($_POST['middle_name']),
-        'phone' => trim($_POST['phone']),
+        'email' => trim($_POST['email']),
         'password' => trim($_POST['password']),
-        'id_coach' => 5,
-        'id_section' => 3,
-        'id_sport' => 5
     ];
 
     // Проверка на существующий аккаунт по логину
-    $qry = "SELECT * FROM user_yamas WHERE user_login = :login";
+    $qry = "SELECT * FROM yamas_user WHERE login_yamas_user = :login";
     $login= array("login" => $parm['login']);
     $check_login = $Database->getRow($qry, $login);
     if (!empty($check_login) > 0){
         $errors['login_error'] = "Аккаунт с данным логином существует";
     }
 
-    // Проверка на существующий аккаунт по телефону
-    $qry = "SELECT * FROM user_yamas WHERE user_phone = :phone";
-    $phone = array("phone" => $parm['phone']);
-    $check_login = $Database->getRow($qry, $phone);
+    // Проверка на существующий аккаунт по эл. почте
+    $qry = "SELECT * FROM yamas_user WHERE email_yamas_user = :email";
+    $email = array("email" => $parm['email']);
+    $check_login = $Database->getRow($qry, $email);
     if (!empty($check_login) > 0){
-        $errors['phone_error'] = "Аккаунт с данным телефон уже зарегестрирован.";
+        $errors['email_error'] = "Аккаунт с данной эл. почтой уже зарегестрирован";
     }
     $letter = "/([a-zA-Z])/";
     $digit = "/(?=.*\d)/";
 
     //Проверка пароля
     if ($parm['password'] < 8) {
-        $errors['password_error'] = 'Пароль должен содержать минимум 8 символов.';
+        $errors['password_error'] = 'Пароль должен содержать минимум 8 символов';
     }
     if (!preg_match($letter, $parm['password'])) {
-        $errors['password_error'] = 'Пароль должен содержать минимум 1 букву латинского алфавита.';
+        $errors['password_error'] = 'Пароль должен содержать минимум 1 букву латинского алфавита';
     }
     if (!preg_match($digit, $parm['password'])) {
-        $errors['password_error'] = 'Пароль должен содержать минимум 1 цифру.';
+        $errors['password_error'] = 'Пароль должен содержать минимум 1 цифру';
     }
 
 
@@ -55,30 +56,28 @@ if (isset($_POST['reg_submit'])) {
     if (empty($errors)) {
         // Запись данных в БД
 
-        $qry = "INSERT INTO user_yamas (user_login, user_surname, user_name, user_middle_name, user_phone, user_password, id_coach, id_section, id_sport) VALUES (:login, :surname, :name, :middle_name, :phone, :password, :id_coach, :id_section, :id_sport)";
+        $qry = "INSERT INTO yamas_user (login_yamas_user, surname_yamas_user, name_yamas_user, patronymic_yamas_user, email_yamas_user, password_yamas_user) VALUES (:login, :surname, :name, :middle_name, :email, :password)";
         $Database->insert($qry, $parm);
-        header('Location: ' . URLROOT . 'account.php');
+        header('Location: account.php');
 
-        $qry = "SELECT * FROM user_yamas WHERE user_phone = :phone";
-        $parm = array("phone" => $parm['phone']);
+        $qry = "SELECT * FROM yamas_user WHERE email_yamas_user = :email";
+        $parm = array("email" => $parm['email']);
         $check_login = $Database->getRow($qry, $parm);
 
         if (!empty($check_login)) {
-            $parm = ['id_user' => $check_login['id_user'], 'transaction_number' => crc32(microtime() . rand(0, 9999)), 'price' => '20000.00', 'status' => 1];
-            $Database->insert("INSERT INTO transaction (transaction_number, price, id_user, `id_transaction_status`) VALUES (:transaction_number, :price, :id_user, :status)", $parm);
             $_SESSION = [];
-            $_SESSION['id_user'] = $check_login['id_user'];
-            $_SESSION['user_name'] = $check_login['user_name'];
-            $_SESSION['user_surname'] = $check_login['user_surname'];
-            $_SESSION['user_middle_name'] = $check_login['user_middle_name'];
-            $_SESSION['user_login'] = $check_login['user_login'];
+            $_SESSION['id_yamas_user'] = $check_login['id_yamas_user'];
+            $_SESSION['name_yamas_user'] = $check_login['name_yamas_user'];
+            $_SESSION['surname_yamas_user'] = $check_login['surname_yamas_user'];
+            $_SESSION['patronymic_yamas_user'] = $check_login['patronymic_yamas_user'];
+            $_SESSION['login_yamas_user'] = $check_login['login_yamas_user'];
             $_SESSION['id_section'] = $check_login['id_section'];
-            $_SESSION['user_phone'] = $check_login['user_phone'];
+            $_SESSION['email_yamas_user'] = $check_login['email_yamas_user'];
         }
     } else {
         $_SESSION['errors'] = $errors;
-        header('Location: ' . URLROOT . 'registration.php');
+        header('Location: registration.php');
     }
 } else {
-    header('Location: ' . URLROOT . 'registration.php');
+    header('Location: registration.php');
 }

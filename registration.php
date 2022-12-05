@@ -1,5 +1,8 @@
 <?php
 require_once 'core.php';
+if ($_SESSION['id_yamas_user']) {
+    header('Location: account.php');
+}
 ?>
 <title>Регистрация</title>
 <link rel="stylesheet" href="css/style.css">
@@ -15,7 +18,7 @@ require_once 'core.php';
                 <input class="form" type="text" name="surname" id="second_name" placeholder="Фамилия" required> <br><br>
                 <input class="form" type="text" name="name" id="name" placeholder="Имя" required> <br><br>
                 <input class="form" type="text" name="middle_name" id="middle_name" placeholder="Отчество"> <br><br>
-                <input class="form" type="text" name="phone" id="phone" placeholder="Телефон" required> <br><br>
+                <input class="form" type="text" name="email" id="email" placeholder="Электронная почта" required> <br><br>
                 <?php if (isset($_SESSION['errors']['phone_error'])) echo '<span class="span">' . $_SESSION['errors']['phone_error'] . '</span>'?>
                 <input type="password" name="password" id="password" placeholder="Пароль" required> <br><br>
                 <?php if (isset($_SESSION['errors']['password_error'])) echo '<span class="span">' . $_SESSION['errors']['password_error'] . '</span>'?>

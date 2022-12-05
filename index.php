@@ -1,5 +1,8 @@
 <?php
 require_once "core.php";
+if ($_SESSION['id_yamas_user']) {
+    header('Location: account.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
