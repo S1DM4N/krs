@@ -1,33 +1,14 @@
 <?php
 require_once "core.php";
-
+require_once 'classes/connect.php';
 if (!$_SESSION['id_yamas_user']) {
     header('Location: registration.php');
 }
-
-// $Database = new Database();
+unset($_SESSION['vid2']);
+unset($_SESSION['trainer2']);
 // $days = array( 1 => "Понедельник" , "Вторник" , "Среда" , "Четверг" , "Пятница" , "Суббота" , "Воскресенье" );
 // $months = array(1 => "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря");
 // $hours = array (1 => "Час", "Часа", "Часа", "Часа", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов",);
-
-// $qry = 'SELECT name_yamas_user, surname_yamas_user, patronymic_yamas_user, section_name, sport_name, coach_name, coach_surname, u.id_coach, u.id_section, u.id_sport, schedule_date, schedule_duration, id_schedule FROM yamas_user u INNER JOIN section s ON u.id_section = s.id_section INNER JOIN coach c on u.id_coach = c.id_coach INNER JOIN sport s2 on u.id_sport = s2.id_sport INNER JOIN schedule s3 ON u.id_sport = s3.id_sport WHERE u.id_yamas_user = :id';
-// $parm = ['id' => $_SESSION['id_yamas_user']];
-// $user = $Database->getRow($qry, $parm);
-
-
-// $parm = ['id_section' => $user['id_section']];
-// $qry = 'SELECT * FROM sport WHERE id_section = :id_section';
-// $sports = $Database->getAll($qry, $parm);
-
-// $qry = 'SELECT * FROM coach';
-// $coaches = $Database->getAll($qry);
-
-// $qry = 'SELECT * FROM section';
-// $sections = $Database->getAll($qry);
-
-// $date = $days[date('N', strtotime($user['schedule_date']))] . date(', j ', strtotime($user['schedule_date'])) . $months[date('N', strtotime($user['schedule_date']))];
-// $duration = date('G', strtotime($user['schedule_duration']));
-// $time = date("H:i", strtotime($user['schedule_date']));
 // ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -73,83 +54,76 @@ if (!$_SESSION['id_yamas_user']) {
                                 <li><p><?php echo $_SESSION['patronymic_yamas_user'] ?></p></li>
                             </ul>
                         </div>
-                        <div class="one">
-                            <ul>
-                                <li><p>Секция:</p></li>
-                                <li><p>Категория:</p></li>
-                                <li><p>Тренер:</p></li>
-                            </ul>
-                            <ul class="ci">
-                                <li><p><?php echo $user['sport_name']?></p></li>
-                                <li><p><?php echo $user['section_name']?></p></li>
-                                <li><p><?php echo $user['coach_name'] != 'Не выбрано' ?  $user['coach_name'] . " " . $user['coach_surname'] : 'Выберите тренера'?></p></li>
-                            </ul>
+                        <div class="ne">
+                            <div class="slct_form">
+                            <form method="post" action="func_account.php" id="vid" onchange="document.querySelector('#vid').submit()">
+                                <?php 
+                                    $sql = mysqli_query($connect, 'SELECT * FROM kind_of_sport');
+                                    echo'
+                                    <select form="vid" name="vid">
+                                    <option value="-1">Выбор вида спорта</option>';
+                                    while($vid = mysqli_fetch_object($sql)) {
+                                        $id_vid = $_SESSION['vid'];
+                                        if (isset($id_vid) & $vid->id_kind_of_sport == $id_vid){
+                                            echo '
+                                            <option selected name="'. $vid->id_kind_of_sport .'" value=" ' . $vid->id_kind_of_sport . ' "> ' . $vid->name_kind_of_sport . '</option>
+                                        ';}
+                                        else {
+                                            echo '
+                                            <option name="'. $vid->id_kind_of_sport .'" value=" ' . $vid->id_kind_of_sport . ' "> ' . $vid->name_kind_of_sport . '</option>
+                                        ';}
+                                    }?>
+                                    </select><br><br>
+                                    <?php
+                                    $sql = mysqli_query($connect, "SELECT id_trainer, CONCAT (trainer.surname_trainer, ' ', trainer.name_trainer) AS fio_trainer FROM `trainer` INNER JOIN `kind_of_sport` ON trainer.id_kind_of_sport = kind_of_sport.id_kind_of_sport WHERE kind_of_sport.id_kind_of_sport = '$id_vid'");
+                                    echo '<select form="vid" name="trainer">
+                                    <option value="-1">Выбор тренера</option>';
+                                    while($trainer = mysqli_fetch_object($sql)) {
+                                        $id_trainer = $_SESSION['trainer'];
+                                            if (isset($id_trainer) & $trainer->id_trainer == $id_trainer){
+                                                echo '
+                                                <option selected name="'. $trainer->id_trainer .'" value=" ' . $trainer->id_trainer . ' "> ' . $trainer->fio_trainer . '</option>
+                                            ';}
+                                            else {
+                                                echo '
+                                                <option name="'. $trainer->id_trainer .'" value=" ' . $trainer->id_trainer . ' "> ' . $trainer->fio_trainer . '</option>
+                                            ';}
+                                    }?>
+                                </select><br><br>
+                            </form>
+                            </div>
+                            <a href="account2.php" class="ne_a" style="display: flex;" >+ Добавить вид спорта</a>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="m_bottom ac rd">
-                <div class="block">
-                        <h1> Редактирование абонемента</h1>
-                        <?php if ($user != null): ?>
-                            <form method="post" action="func_account.php" id="category">
-                                <select form="category" name="section" onchange="document.querySelector('#category').submit()">
-                                    <option value="-1" <?php if ($user['id_sport'] == 5 || $user['id_sport'] == 6) echo 'selected' ?> disabled>Выбор спортивной категории</option>
-                                    <?php foreach ($sections as $section): ?>
-                                        <?php if ($section['id_section'] != 3): ?>
-                                            <option value="<?php echo $section['id_section'] ?>" <?php if ($section['id_section'] == $user['id_section']) echo 'selected' ?>><?php echo $section['section_name'] ?></option>
-                                        <?php endif; ?>
-                                    <?php endforeach;?>
-                                </select><br><br>
-                            </form>
-                        <?php else: ?>
-                            <form method="post" action="func_account.php" id="category">
-                                <select form="category" name="section" onchange="document.querySelector('#category').submit()">
-                                    <option value="-1" selected disabled>Выбор спортивной категории</option>
-                                    <?php foreach ($sections as $section): ?>
-                                        <option value="<?php echo $section['id_section'] ?>"><?php echo $section['section_name'] ?></option>
-                                    <?php endforeach;?>
-                                </select><br><br>
-                            </form>
-                        <?php endif; ?>
-                    <form method="post" action="func_account.php" id="sport">
-                        <select form="sport" name="sport" onchange="document.querySelector('#sport').submit()">
-                            <?php if ($user['id_section'] == 3): ?>
-                                <option value="-1" selected disabled>Выберите спортивную категорию</option>
-                            <?php else: ?>
-                                <option value="-1" <?php if ($user != null || $user['id_sport'] == 5 || $user['id_sport'] == 6) echo 'selected' ?> disabled>Выбор спортивной секции</option>
-                            <?php endif; ?>
-                            <?php foreach ($sports as $sport): ?>
-                                <?php if ($sport['id_sport'] != 5 && $sport['id_sport'] != 6): ?>
-                                    <option value="<?php echo $sport['id_sport'] ?>" <?php if ($sport['id_sport'] == $user['id_sport']) echo 'selected' ?>><?php echo $sport['sport_name'] ?></option>
-                                <?php endif; ?>
-                            <?php endforeach;?>
-                        </select><br><br>
-                    </form>
-                        <form method="post" action="func_account.php" id="coach">
-                            <select form="coach" name="coach" onchange="document.querySelector('#coach').submit()">
-                                <option value="-1" <?php if ($user['id_sport'] == 5 || $user['id_sport'] == 6) echo 'selected' ?> disabled>Выбор тренера</option>
-                                <?php foreach ($coaches as $coach): ?>
-                                    <?php if ($coach['id_coach'] != 5): ?>
-                                        <option value="<?php echo $coach['id_coach'] ?>" <?php if ($coach['id_coach'] == $user['id_coach']) echo 'selected' ?>><?php echo $coach['coach_name'] . " " . $coach['coach_surname']?></option>
-                                    <?php endif; ?>
-                                <?php endforeach;?>
-                            </select><br><br>
-                        </form>
-                </div>
-
-                <div class="block rs">
-                    <?php if($user == null || $user['id_schedule'] == 3):?>
-                        <h1>Расписание занятий</h1>
-                        <h2>Выберите спортивную секцию</h2>
-                    <?php else: ?>
-                        <h1>Расписание занятий</h1>
-                        <h3><?php echo $time ?></h3>
-                        <p><?php echo $duration . " " . $hours[$duration];  ?></p>
-                        <h2><?php echo $date ?></h2>
+            <?php
+            if (isset($_SESSION['trainer']) & isset($_SESSION['vid'])):
+                if ( $_SESSION['vid'] >= 0 & $_SESSION['trainer'] >= 0):
+                    $id_trainer = $_SESSION['trainer'];
+                    $id_user = $_SESSION['id_yamas_user'];
+                    $sql = mysqli_query($connect, "SELECT * FROM training WHERE id_yamas_user = '$id_user' AND id_trainer = '$id_trainer'");
+                    $trainer = mysqli_fetch_object($sql);
+                    $sql = mysqli_query($connect, "SELECT name_kind_of_sport FROM `kind_of_sport` WHERE id_kind_of_sport = '$id_vid'");
+                    $vid = mysqli_fetch_object($sql);
+                    
+                    $sql = mysqli_query($connect, "SET lc_time_names = 'ru_RU'");
+                    $sql = mysqli_query($connect, "SELECT DATE_FORMAT(date_time_start,'%W, %e %M %Y') AS `date`, DATE_FORMAT(date_time_start,'%H:%m') AS `time_start`, DATE_FORMAT(date_time_end,'%H:%m') AS `time_end` FROM training WHERE id_yamas_user = '$id_user' AND id_trainer = '$id_trainer'");
+                    if (isset($trainer)): 
+                        while($datetime = mysqli_fetch_assoc($sql)):?>
+                                <div class="block rs">
+                                    <h1><?=$vid->name_kind_of_sport?></h1>
+                                    <h3> c <?= $datetime['time_start']?> </h3>
+                                    <h3>до <?= $datetime['time_end']?></h3>
+                                    <h2> <?= $datetime['date']?></h2>
+                                </div>
+                        <?php endwhile;?>
+                        <?php else:?>
+                        <h2 class="block rs">Расписание пока не составлено</h2>
                     <?php endif;?>
-
-                </div>
+                <?php endif;?>
+            <?php endif;?>
             </div>
         </main>
         <?php require "footer.php"?>

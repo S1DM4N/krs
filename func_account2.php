@@ -15,8 +15,18 @@ if (isset($_POST['trainer'])) {
     print_r($_SESSION['trainer'] );
     print_r($_POST['trainer'] );
 }
+if (isset($_POST['vid2'])) {
+    $_SESSION['vid2'] = $_POST['vid2'];
+    print_r($_SESSION['vid2'] );
+    print_r($_POST['vid2'] );
+}
+if (isset($_POST['trainer2'])) {
+    $_SESSION['trainer2'] = $_POST['trainer2'];
+    print_r($_SESSION['trainer2'] );
+    print_r($_POST['trainer2'] );
+}
 
-header('Location: account.php');
+header('Location: account2.php');
 // $Database = new Database();
 // if (isset($_POST['vid'])) {
     
