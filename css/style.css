@@ -564,11 +564,125 @@ input::-webkit-input-placeholder { color: #FF7AAD; }
 .rd .block{
     width: 32.7vw;
 }
+.admin a {
+    text-decoration: none;
+    color: #FFF;
+    font-size: 1.7vw;
+    font-weight: 700;
+}
+.head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.admin h2{
+    width: auto;
+    font-weight: bold;
+    font-size: 2.6vw;
+    color: #DB3172;
+}
+.admin p {
+    font-size: 2vw;
+    padding: 1vw 1vh;
+}
+.admin .edit {
+    display: flex;
+    justify-content: space-evenly;
+    border-right: none;
+}
+.title p {
+    border-right: solid 1px #fff;
+}
+.tbl p {
+    border-right: solid 1px #fff;
+    border-top: solid 1px #fff;
+}
+.head a {
+    color: #DB3172;
+    border-color: #DB3172;
+}
+.ext, .dd {
+    box-sizing: border-box;
+    padding: 0.6vh 1vw;
+    border: solid 1px #fff;
+    border-radius: 0.7vw;
+}
+.hd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2vh;
+}
+.dd {
+    padding: 0.8vh 0.8vw;
+    height: 100%;
+}
+.cnt h3 {
+    font-size: 2vw;
+}
+.fio{
+    width: 28vw;
+}
+.login{
+    width: 18vw;
+}
+.email{
+    width: 20vw;
+}
+.id {
+    width: 4vw;
+}
 .rd .button {
     margin: 0;
 }
+.tbl, .title{
+    display: flex;
+    justify-content: center;
+}
+.admin {
+    margin: 3.14vh 3vw;
+    padding: 3.14vh 3vw;
+}
+.admin .cnt {
+    color: #fff;
+    padding: 2.25vh 1.77vw;
+    margin: 3vh 0 0 0;
+}
+.cnt_table {
+    border: solid 1px #fff;
+    border-radius: 0.7vw;
+}
 .rd .button:hover {
     border-color: white;
+}
+.cm .vid {
+    width: 28vw;
+}
+.cm .fio {
+    width: 15.97vw;
+}
+.delete_form {
+    color: #DB3172;
+    margin: 0 auto;
+}
+.delete_form h1 {
+    font-weight: bold;
+    font-size: 3.5vw;
+    margin-bottom: 3vh;
+}
+.a_dlt {
+    display: flex;
+    justify-content: space-evenly;
+}
+.a_dlt a {
+    border: solid 1px #DB3172;
+    border-radius: 0.7vw;
+    padding: 0.1vh 1vw;
+    text-decoration: none;
+}
+.enter select {
+    width: 30vw;
+    height: 3.95vh;
 }
 .rd .rs {
     width: 26.77vw;

@@ -4,6 +4,10 @@ require_once 'classes/connect.php';
 if (!$_SESSION['id_yamas_user']) {
     header('Location: registration.php');
 }
+
+$user = $_SESSION['id_yamas_user'];
+$training = mysqli_query($connect,"SELECT * FROM `training` WHERE id_yamas_user = '$user'");
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -51,7 +55,7 @@ if (!$_SESSION['id_yamas_user']) {
                         </div>
                         <div class="ne">
                             <div class="slct_form">
-                            <form method="post" action="func_account.php" id="vid" onchange="document.querySelector('#vid').submit()">
+                            <form method="post" action="func_account2.php" id="vid" onchange="document.querySelector('#vid').submit()">
                                 <?php
                                     if(isset($_SESSION['vid2'])) {
                                         $id_vid2 = $_SESSION['vid2'];
@@ -152,8 +156,10 @@ if (!$_SESSION['id_yamas_user']) {
             </div>
             <div class="m_bottom ac rd">
             <?php
+            while($tr = mysqli_fetch_object($training)):
+            if(isset($tr->date_time_start, $tr->date_time_end)):
             if (isset($_SESSION['trainer']) & isset($_SESSION['vid'])):
-                if ( $_SESSION['vid'] >= 0 & $_SESSION['trainer'] >= 0):
+                if ( $_SESSION['trainer'] >= 0 & $_SESSION['vid'] >= 0 ):
                     $id_trainer = $_SESSION['trainer'];
                     $id_user = $_SESSION['id_yamas_user'];
                     $sql = mysqli_query($connect, "SELECT * FROM training WHERE id_yamas_user = '$id_user' AND id_trainer = '$id_trainer'");
@@ -177,8 +183,14 @@ if (!$_SESSION['id_yamas_user']) {
                     <?php endif;?>
                 <?php endif;?>
             <?php endif;?>
+            <?php else:?>
+                        <h2 class="block rs">Расписание пока не составлено</h2>
+            <?php endif;?>
+            <?php endwhile;?>
             <?php
-            if (isset($_SESSION['trainer2']) & isset($_SESSION['vid2'])):
+            while($tr = mysqli_fetch_object($training)):
+            if(isset($tr->date_time_start, $tr->date_time_end)):
+            if (isset($_SESSION['vid2']) & isset($_SESSION['trainer2'])):
                 if (isset($_SESSION['trainer2']) & $_SESSION['vid2'] >= 0 & $_SESSION['trainer2'] >= 0):
                     $id_trainer2 = $_SESSION['trainer2'];
                     $id_user = $_SESSION['id_yamas_user'];
@@ -203,6 +215,10 @@ if (!$_SESSION['id_yamas_user']) {
                     <?php endif;?>
                 <?php endif;?>
             <?php endif;?>
+            <?php else:?>
+                        <h2 class="block rs">Расписание пока не составлено</h2>
+            <?php endif;?>
+            <?php endwhile;?>
             </div>
         </main>
         <?php require "footer.php"?>

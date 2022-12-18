@@ -6,10 +6,21 @@ if (!$_SESSION['id_yamas_user']) {
 }
 unset($_SESSION['vid2']);
 unset($_SESSION['trainer2']);
-// $days = array( 1 => "Понедельник" , "Вторник" , "Среда" , "Четверг" , "Пятница" , "Суббота" , "Воскресенье" );
-// $months = array(1 => "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря");
-// $hours = array (1 => "Час", "Часа", "Часа", "Часа", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов", "Часов",);
-// ?>
+
+$user = $_SESSION['id_yamas_user'];
+
+$training = mysqli_query($connect,"SELECT * FROM `training` WHERE id_yamas_user = '$user'");
+
+if($training->num_rows == 2){
+    header('Location:account2.php');
+}
+
+if(isset($_SESSION['id_tr2'])){
+    $id_tr2 = $_SESSION['id_tr2'];
+    $sql = mysqli_query($connect, "DELETE FROM `training` WHERE `training`.`id_training` = '$id_tr2'");
+}
+
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -57,22 +68,23 @@ unset($_SESSION['trainer2']);
                         <div class="ne">
                             <div class="slct_form">
                             <form method="post" action="func_account.php" id="vid" onchange="document.querySelector('#vid').submit()">
-                                <?php 
+                                <?php
                                     $sql = mysqli_query($connect, 'SELECT * FROM kind_of_sport');
                                     echo'
                                     <select form="vid" name="vid">
                                     <option value="-1">Выбор вида спорта</option>';
-                                    while($vid = mysqli_fetch_object($sql)) {
-                                        $id_vid = $_SESSION['vid'];
-                                        if (isset($id_vid) & $vid->id_kind_of_sport == $id_vid){
-                                            echo '
-                                            <option selected name="'. $vid->id_kind_of_sport .'" value=" ' . $vid->id_kind_of_sport . ' "> ' . $vid->name_kind_of_sport . '</option>
-                                        ';}
-                                        else {
-                                            echo '
-                                            <option name="'. $vid->id_kind_of_sport .'" value=" ' . $vid->id_kind_of_sport . ' "> ' . $vid->name_kind_of_sport . '</option>
-                                        ';}
-                                    }?>
+                                            while($vid = mysqli_fetch_object($sql)) {
+                                                $id_vid = $_SESSION['vid'];
+                                                
+                                                if (isset($id_vid) & $vid->id_kind_of_sport == $id_vid){
+                                                    echo '
+                                                    <option selected name="'. $vid->id_kind_of_sport .'" value=" ' . $vid->id_kind_of_sport . ' "> ' . $vid->name_kind_of_sport . '</option>
+                                                ';}
+                                                else {
+                                                    echo '
+                                                    <option name="'. $vid->id_kind_of_sport .'" value=" ' . $vid->id_kind_of_sport . ' "> ' . $vid->name_kind_of_sport . '</option>
+                                                ';}
+                                            }?>
                                     </select><br><br>
                                     <?php
                                     $sql = mysqli_query($connect, "SELECT id_trainer, CONCAT (trainer.surname_trainer, ' ', trainer.name_trainer) AS fio_trainer FROM `trainer` INNER JOIN `kind_of_sport` ON trainer.id_kind_of_sport = kind_of_sport.id_kind_of_sport WHERE kind_of_sport.id_kind_of_sport = '$id_vid'");
@@ -99,8 +111,10 @@ unset($_SESSION['trainer2']);
             </div>
             <div class="m_bottom ac rd">
             <?php
+            while($tr = mysqli_fetch_object($training)):
+            if(isset($tr->date_time_start, $tr->date_time_end)):
             if (isset($_SESSION['trainer']) & isset($_SESSION['vid'])):
-                if ( $_SESSION['vid'] >= 0 & $_SESSION['trainer'] >= 0):
+                if ( $_SESSION['trainer'] >= 0 & $_SESSION['vid'] >= 0 ):
                     $id_trainer = $_SESSION['trainer'];
                     $id_user = $_SESSION['id_yamas_user'];
                     $sql = mysqli_query($connect, "SELECT * FROM training WHERE id_yamas_user = '$id_user' AND id_trainer = '$id_trainer'");
@@ -124,6 +138,10 @@ unset($_SESSION['trainer2']);
                     <?php endif;?>
                 <?php endif;?>
             <?php endif;?>
+            <?php else:?>
+                        <h2 class="block rs">Расписание пока не составлено</h2>
+            <?php endif;?>
+            <?php endwhile;?>
             </div>
         </main>
         <?php require "footer.php"?>
