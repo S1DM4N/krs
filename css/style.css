@@ -728,6 +728,15 @@ input::-webkit-input-placeholder { color: #FF7AAD; }
 .list form {
     display: flex;
 }
+.com .cnt{
+    margin: 0;
+}
+.com p {
+    width: 35%;
+}
+.com .r, .com .l {
+
+}
 .sttng {
     margin-bottom: 2vh;
 }
